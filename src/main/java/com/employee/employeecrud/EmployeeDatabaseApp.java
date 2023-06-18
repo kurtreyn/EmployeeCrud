@@ -21,6 +21,9 @@ public class EmployeeDatabaseApp {
 
 
     public static void main(String[] args) {
+        DbManager db = new DbManager();
+        db.createNewDatabase("employee.sqlite");
+        db.createNewTable();
         JFrame frame = new JFrame("Employee Database App");
         frame.setContentPane(new EmployeeDatabaseApp().Main);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
