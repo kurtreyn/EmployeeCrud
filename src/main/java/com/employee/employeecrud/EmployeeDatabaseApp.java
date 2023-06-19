@@ -42,7 +42,7 @@ public class EmployeeDatabaseApp{
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Employee employee = new Employee();
+//                Employee employee = new Employee();
 
                 String name, salary, mobile;
                 name = txtName.getText();
@@ -55,15 +55,16 @@ public class EmployeeDatabaseApp{
                     pst.setString(2, salary);
                     pst.setString(3, mobile);
 
-                    int addedRows = pst.executeUpdate();
-                    if (addedRows > 0) {
-                        employee.name = name;
-                        employee.salary = salary;
-                        employee.mobile = mobile;
-                    }
+//                    int addedRows = pst.executeUpdate();
+//                    if (addedRows > 0) {
+//                        employee.name = name;
+//                        employee.salary = salary;
+//                        employee.mobile = mobile;
+//                    }
 
-//                    pst.executeUpdate();
+                    pst.executeUpdate();
                     JOptionPane.showMessageDialog(null, "Record Added");
+                    loadTable();
                     txtName.setText("");
                     txtSalary.setText("");
                     txtMobile.setText("");
@@ -74,6 +75,83 @@ public class EmployeeDatabaseApp{
                     e1.printStackTrace();
                 }
 
+            }
+        });
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String id = txtid.getText();
+                try {
+                    pst = con.prepareStatement("SELECT * FROM employee WHERE id = ?");
+                    pst.setString(1, id);
+                    ResultSet rs = pst.executeQuery();
+                    if (rs.next() == true) {
+                        String name = rs.getString(2);
+                        String salary = rs.getString(3);
+                        String mobile = rs.getString(4);
+
+                        txtName.setText(name);
+                        txtSalary.setText(salary);
+                        txtMobile.setText(mobile);
+                    } else {
+                        txtName.setText("");
+                        txtSalary.setText("");
+                        txtMobile.setText("");
+                        JOptionPane.showMessageDialog(null, "Invalid ID");
+                    }
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String id;
+                id = txtid.getText();
+
+                try {
+                    pst = con.prepareStatement("DELETE FROM employee WHERE id=?");
+
+                    pst.setString(1, id);
+
+                    pst.executeUpdate();
+                    JOptionPane.showMessageDialog(null, "Record Deleted");
+                    loadTable();
+                    txtName.setText("");
+                    txtSalary.setText("");
+                    txtMobile.setText("");
+                    txtName.requestFocus();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            });
+        updateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String name, salary, mobile, id;
+                name = txtName.getText();
+                salary = txtSalary.getText();
+                mobile = txtMobile.getText();
+                id = txtid.getText();
+
+                try {
+                    pst = con.prepareStatement("UPDATE employee SET name = ?, salary = ?, mobile = ? WHERE id = ?");
+                    pst.setString(1, name);
+                    pst.setString(2, salary);
+                    pst.setString(3, mobile);
+                    pst.setString(4, id);
+                    pst.executeUpdate();
+                    JOptionPane.showMessageDialog(null, "Record Updated");
+                    loadTable();
+                    txtName.setText("");
+                    txtSalary.setText("");
+                    txtMobile.setText("");
+                    txtName.requestFocus();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
     }
@@ -90,7 +168,6 @@ public class EmployeeDatabaseApp{
 
     public void closeConnection() {
         String SQCONN = "jdbc:sqlite:employee.sqlite";
-
         try {
             con = DriverManager.getConnection(SQCONN);
             stmt = con.createStatement();
@@ -115,19 +192,18 @@ public class EmployeeDatabaseApp{
                 columnNames[i - 1] = rsmd.getColumnName(i);
             }
             model.setColumnIdentifiers(columnNames);
-            String name, salary, mobile;
+            String ID,Name, Salary, Mobile;
             while (rs.next()) {
-                name = rs.getString("name");
-                salary = rs.getString("salary");
-                mobile = rs.getString("mobile");
-                model.addRow(new Object[]{name, salary, mobile});
+                ID = rs.getString("id");
+                Name = rs.getString("name");
+                Salary = rs.getString("salary");
+                Mobile = rs.getString("mobile");
+                model.addRow(new Object[]{ID,Name, Salary, Mobile});
             }
-//            pst = con.prepareStatement("SELECT * FROM employee");
-//            ResultSet rs = pst.executeQuery();
-//            employee_table.setModel(DbUtils.resultSetToTableModel(rs));
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 }
 
