@@ -8,7 +8,7 @@ public class DbManager {
     public PreparedStatement pst;
     public Connection con;
     public Statement stmt;
-    public JTable table1;
+
 
     public static void createNewDatabase(String fileName) {
         String SQCONN = "jdbc:sqlite:employee.sqlite";
@@ -66,7 +66,7 @@ public class DbManager {
         }
     }
 
-    public void loadTable(JTable table) {
+    public JTable loadTable(JTable table) {
         String query = "SELECT * FROM employee";
         try {
             pst = con.prepareStatement(query);
@@ -90,5 +90,6 @@ public class DbManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return table;
     }
 }

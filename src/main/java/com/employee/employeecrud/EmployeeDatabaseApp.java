@@ -1,7 +1,6 @@
 package com.employee.employeecrud;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
@@ -20,8 +19,7 @@ public class EmployeeDatabaseApp{
     private JTextField txtid;
     private JScrollPane employee_table;
     PreparedStatement pst;
-    Connection con;
-    Statement stmt;
+
 
 
     public static void main(String[] args) {
@@ -51,7 +49,7 @@ public class EmployeeDatabaseApp{
                 mobile = txtMobile.getText();
 
                 try {
-                    pst = con.prepareStatement("INSERT INTO employee(name,salary,mobile)VALUES(?,?,?)");
+                    pst = db.con.prepareStatement("INSERT INTO employee(name,salary,mobile)VALUES(?,?,?)");
                     pst.setString(1, name);
                     pst.setString(2, salary);
                     pst.setString(3, mobile);
@@ -62,8 +60,6 @@ public class EmployeeDatabaseApp{
                     txtSalary.setText("");
                     txtMobile.setText("");
                     txtName.requestFocus();
-
-                    db.closeConnection();
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
@@ -75,7 +71,7 @@ public class EmployeeDatabaseApp{
             public void actionPerformed(ActionEvent e) {
                 String id = txtid.getText();
                 try {
-                    pst = con.prepareStatement("SELECT * FROM employee WHERE id = ?");
+                    pst = db.con.prepareStatement("SELECT * FROM employee WHERE id = ?");
                     pst.setString(1, id);
                     ResultSet rs = pst.executeQuery();
                     if (rs.next() == true) {
@@ -104,7 +100,7 @@ public class EmployeeDatabaseApp{
                 id = txtid.getText();
 
                 try {
-                    pst = con.prepareStatement("DELETE FROM employee WHERE id=?");
+                    pst = db.con.prepareStatement("DELETE FROM employee WHERE id=?");
 
                     pst.setString(1, id);
 
@@ -130,7 +126,7 @@ public class EmployeeDatabaseApp{
                 id = txtid.getText();
 
                 try {
-                    pst = con.prepareStatement("UPDATE employee SET name = ?, salary = ?, mobile = ? WHERE id = ?");
+                    pst = db.con.prepareStatement("UPDATE employee SET name = ?, salary = ?, mobile = ? WHERE id = ?");
                     pst.setString(1, name);
                     pst.setString(2, salary);
                     pst.setString(3, mobile);
