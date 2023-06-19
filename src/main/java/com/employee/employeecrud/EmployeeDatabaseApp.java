@@ -54,14 +54,6 @@ public class EmployeeDatabaseApp{
                     pst.setString(1, name);
                     pst.setString(2, salary);
                     pst.setString(3, mobile);
-
-//                    int addedRows = pst.executeUpdate();
-//                    if (addedRows > 0) {
-//                        employee.name = name;
-//                        employee.salary = salary;
-//                        employee.mobile = mobile;
-//                    }
-
                     pst.executeUpdate();
                     JOptionPane.showMessageDialog(null, "Record Added");
                     loadTable();
