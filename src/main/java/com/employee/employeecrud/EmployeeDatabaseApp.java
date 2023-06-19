@@ -1,7 +1,6 @@
 package com.employee.employeecrud;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
@@ -20,8 +19,7 @@ public class EmployeeDatabaseApp{
     private JTextField txtid;
     private JScrollPane employee_table;
     PreparedStatement pst;
-    Connection con;
-    Statement stmt;
+
 
 
     public static void main(String[] args) {
@@ -37,8 +35,9 @@ public class EmployeeDatabaseApp{
 
     //    CONSTRUCTOR
     public EmployeeDatabaseApp() {
-        connect();
-        loadTable();
+        DbManager db = new DbManager();
+        db.connect();
+        db.tableLoad(table1);
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -50,19 +49,17 @@ public class EmployeeDatabaseApp{
                 mobile = txtMobile.getText();
 
                 try {
-                    pst = con.prepareStatement("INSERT INTO employee(name,salary,mobile)VALUES(?,?,?)");
+                    pst = db.con.prepareStatement("INSERT INTO employee(name,salary,mobile)VALUES(?,?,?)");
                     pst.setString(1, name);
                     pst.setString(2, salary);
                     pst.setString(3, mobile);
                     pst.executeUpdate();
                     JOptionPane.showMessageDialog(null, "Record Added");
-                    loadTable();
+                    db.tableLoad(table1);
                     txtName.setText("");
                     txtSalary.setText("");
                     txtMobile.setText("");
                     txtName.requestFocus();
-
-                    closeConnection();
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
@@ -74,7 +71,7 @@ public class EmployeeDatabaseApp{
             public void actionPerformed(ActionEvent e) {
                 String id = txtid.getText();
                 try {
-                    pst = con.prepareStatement("SELECT * FROM employee WHERE id = ?");
+                    pst = db.con.prepareStatement("SELECT * FROM employee WHERE id = ?");
                     pst.setString(1, id);
                     ResultSet rs = pst.executeQuery();
                     if (rs.next() == true) {
@@ -101,15 +98,12 @@ public class EmployeeDatabaseApp{
             public void actionPerformed(ActionEvent e) {
                 String id;
                 id = txtid.getText();
-
                 try {
-                    pst = con.prepareStatement("DELETE FROM employee WHERE id=?");
-
+                    pst = db.con.prepareStatement("DELETE FROM employee WHERE id = ?");
                     pst.setString(1, id);
-
                     pst.executeUpdate();
                     JOptionPane.showMessageDialog(null, "Record Deleted");
-                    loadTable();
+                    db.tableLoad(table1);
                     txtName.setText("");
                     txtSalary.setText("");
                     txtMobile.setText("");
@@ -129,14 +123,14 @@ public class EmployeeDatabaseApp{
                 id = txtid.getText();
 
                 try {
-                    pst = con.prepareStatement("UPDATE employee SET name = ?, salary = ?, mobile = ? WHERE id = ?");
+                    pst = db.con.prepareStatement("UPDATE employee SET name = ?, salary = ?, mobile = ? WHERE id = ?");
                     pst.setString(1, name);
                     pst.setString(2, salary);
                     pst.setString(3, mobile);
                     pst.setString(4, id);
                     pst.executeUpdate();
                     JOptionPane.showMessageDialog(null, "Record Updated");
-                    loadTable();
+                    db.tableLoad(table1);
                     txtName.setText("");
                     txtSalary.setText("");
                     txtMobile.setText("");
@@ -146,55 +140,6 @@ public class EmployeeDatabaseApp{
                 }
             }
         });
-    }
-
-    public void connect() {
-        String SQCONN = "jdbc:sqlite:employee.sqlite";
-        try {
-            con = DriverManager.getConnection(SQCONN);
-            System.out.println("Application created successfully");
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public void closeConnection() {
-        String SQCONN = "jdbc:sqlite:employee.sqlite";
-        try {
-            con = DriverManager.getConnection(SQCONN);
-            stmt = con.createStatement();
-            con.close();
-            stmt.close();
-            System.out.println("Application closed successfully");
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public void loadTable() {
-        String query = "SELECT * FROM employee";
-        try {
-            pst = con.prepareStatement(query);
-            ResultSet rs = pst.executeQuery();
-            ResultSetMetaData rsmd = rs.getMetaData();
-            DefaultTableModel model = (DefaultTableModel) table1.getModel();
-            int columnCount = rsmd.getColumnCount();
-            String[] columnNames = new String[columnCount];
-            for (int i = 1; i <= columnCount; i++) {
-                columnNames[i - 1] = rsmd.getColumnName(i);
-            }
-            model.setColumnIdentifiers(columnNames);
-            String ID,Name, Salary, Mobile;
-            while (rs.next()) {
-                ID = rs.getString("id");
-                Name = rs.getString("name");
-                Salary = rs.getString("salary");
-                Mobile = rs.getString("mobile");
-                model.addRow(new Object[]{ID,Name, Salary, Mobile});
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
 }
