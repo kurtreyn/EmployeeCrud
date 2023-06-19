@@ -54,45 +54,6 @@ public class DbManager {
         }
     }
 
-    public void closeConnection() {
-        String SQCONN = "jdbc:sqlite:employee.sqlite";
-        try {
-            con = DriverManager.getConnection(SQCONN);
-            stmt = con.createStatement();
-            con.close();
-            stmt.close();
-            System.out.println("Application closed successfully");
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public JTable loadTable(JTable table) {
-        String query = "SELECT * FROM employee";
-        try {
-            pst = con.prepareStatement(query);
-            ResultSet rs = pst.executeQuery();
-            ResultSetMetaData rsmd = rs.getMetaData();
-            DefaultTableModel model = (DefaultTableModel) table.getModel();
-            int columnCount = rsmd.getColumnCount();
-            String[] columnNames = new String[columnCount];
-            for (int i = 1; i <= columnCount; i++) {
-                columnNames[i - 1] = rsmd.getColumnName(i);
-            }
-            model.setColumnIdentifiers(columnNames);
-            String ID,Name, Salary, Mobile;
-            while (rs.next()) {
-                ID = rs.getString("id");
-                Name = rs.getString("name");
-                Salary = rs.getString("salary");
-                Mobile = rs.getString("mobile");
-                model.addRow(new Object[]{ID,Name, Salary, Mobile});
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return table;
-    }
 
     public JTable tableLoad(JTable table) {
         try {
