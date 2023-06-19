@@ -2,6 +2,7 @@ package com.employee.employeecrud;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import javax.swing.*;
+import net.proteanit.sql.DbUtils;
 
 
 public class DbManager {
@@ -87,6 +88,17 @@ public class DbManager {
                 Mobile = rs.getString("mobile");
                 model.addRow(new Object[]{ID,Name, Salary, Mobile});
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return table;
+    }
+
+    public JTable tableLoad(JTable table) {
+        try {
+            pst = con.prepareStatement("SELECT * FROM employee");
+            ResultSet rs = pst.executeQuery();
+            table.setModel(DbUtils.resultSetToTableModel(rs));
         } catch (SQLException e) {
             e.printStackTrace();
         }

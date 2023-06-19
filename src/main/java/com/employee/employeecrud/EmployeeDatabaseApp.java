@@ -37,7 +37,7 @@ public class EmployeeDatabaseApp{
     public EmployeeDatabaseApp() {
         DbManager db = new DbManager();
         db.connect();
-        db.loadTable(table1);
+        db.tableLoad(table1);
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -55,7 +55,7 @@ public class EmployeeDatabaseApp{
                     pst.setString(3, mobile);
                     pst.executeUpdate();
                     JOptionPane.showMessageDialog(null, "Record Added");
-                    db.loadTable(table1);
+                    db.tableLoad(table1);
                     txtName.setText("");
                     txtSalary.setText("");
                     txtMobile.setText("");
@@ -98,15 +98,12 @@ public class EmployeeDatabaseApp{
             public void actionPerformed(ActionEvent e) {
                 String id;
                 id = txtid.getText();
-
                 try {
-                    pst = db.con.prepareStatement("DELETE FROM employee WHERE id=?");
-
+                    pst = db.con.prepareStatement("DELETE FROM employee WHERE id = ?");
                     pst.setString(1, id);
-
                     pst.executeUpdate();
                     JOptionPane.showMessageDialog(null, "Record Deleted");
-                    db.loadTable(table1);
+                    db.tableLoad(table1);
                     txtName.setText("");
                     txtSalary.setText("");
                     txtMobile.setText("");
@@ -133,7 +130,7 @@ public class EmployeeDatabaseApp{
                     pst.setString(4, id);
                     pst.executeUpdate();
                     JOptionPane.showMessageDialog(null, "Record Updated");
-                    db.loadTable(table1);
+                    db.tableLoad(table1);
                     txtName.setText("");
                     txtSalary.setText("");
                     txtMobile.setText("");
