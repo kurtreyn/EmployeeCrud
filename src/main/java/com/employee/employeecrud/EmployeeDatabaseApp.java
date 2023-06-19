@@ -37,8 +37,9 @@ public class EmployeeDatabaseApp{
 
     //    CONSTRUCTOR
     public EmployeeDatabaseApp() {
-        connect();
-        loadTable();
+        DbManager db = new DbManager();
+        db.connect();
+        db.loadTable(table1);
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -54,23 +55,15 @@ public class EmployeeDatabaseApp{
                     pst.setString(1, name);
                     pst.setString(2, salary);
                     pst.setString(3, mobile);
-
-//                    int addedRows = pst.executeUpdate();
-//                    if (addedRows > 0) {
-//                        employee.name = name;
-//                        employee.salary = salary;
-//                        employee.mobile = mobile;
-//                    }
-
                     pst.executeUpdate();
                     JOptionPane.showMessageDialog(null, "Record Added");
-                    loadTable();
+                    db.loadTable(table1);
                     txtName.setText("");
                     txtSalary.setText("");
                     txtMobile.setText("");
                     txtName.requestFocus();
 
-                    closeConnection();
+                    db.closeConnection();
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
@@ -117,7 +110,7 @@ public class EmployeeDatabaseApp{
 
                     pst.executeUpdate();
                     JOptionPane.showMessageDialog(null, "Record Deleted");
-                    loadTable();
+                    db.loadTable(table1);
                     txtName.setText("");
                     txtSalary.setText("");
                     txtMobile.setText("");
@@ -144,7 +137,7 @@ public class EmployeeDatabaseApp{
                     pst.setString(4, id);
                     pst.executeUpdate();
                     JOptionPane.showMessageDialog(null, "Record Updated");
-                    loadTable();
+                    db.loadTable(table1);
                     txtName.setText("");
                     txtSalary.setText("");
                     txtMobile.setText("");
@@ -154,55 +147,6 @@ public class EmployeeDatabaseApp{
                 }
             }
         });
-    }
-
-    public void connect() {
-        String SQCONN = "jdbc:sqlite:employee.sqlite";
-        try {
-            con = DriverManager.getConnection(SQCONN);
-            System.out.println("Application created successfully");
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public void closeConnection() {
-        String SQCONN = "jdbc:sqlite:employee.sqlite";
-        try {
-            con = DriverManager.getConnection(SQCONN);
-            stmt = con.createStatement();
-            con.close();
-            stmt.close();
-            System.out.println("Application closed successfully");
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public void loadTable() {
-        String query = "SELECT * FROM employee";
-        try {
-            pst = con.prepareStatement(query);
-            ResultSet rs = pst.executeQuery();
-            ResultSetMetaData rsmd = rs.getMetaData();
-            DefaultTableModel model = (DefaultTableModel) table1.getModel();
-            int columnCount = rsmd.getColumnCount();
-            String[] columnNames = new String[columnCount];
-            for (int i = 1; i <= columnCount; i++) {
-                columnNames[i - 1] = rsmd.getColumnName(i);
-            }
-            model.setColumnIdentifiers(columnNames);
-            String ID,Name, Salary, Mobile;
-            while (rs.next()) {
-                ID = rs.getString("id");
-                Name = rs.getString("name");
-                Salary = rs.getString("salary");
-                Mobile = rs.getString("mobile");
-                model.addRow(new Object[]{ID,Name, Salary, Mobile});
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
 }
