@@ -107,6 +107,7 @@ public class EmployeeDatabaseApp{
                     txtName.setText("");
                     txtSalary.setText("");
                     txtMobile.setText("");
+                    txtid.setText("");
                     txtName.requestFocus();
                 } catch (SQLException e1) {
                     e1.printStackTrace();
